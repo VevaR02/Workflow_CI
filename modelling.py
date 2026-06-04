@@ -6,7 +6,7 @@ from sklearn.ensemble import RandomForestClassifier
 
 mlflow.set_tracking_uri("http://127.0.0.1:5000")
 
-df = pd.read_csv(df = pd.read_csv('dataset_preprocessing/dataset_ready.csv')) 
+df = pd.read_csv('dataset_preprocessing/dataset_ready.csv')
 
 X = df.drop('status', axis=1)
 y = df['status']
