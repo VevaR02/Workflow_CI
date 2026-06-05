@@ -27,9 +27,12 @@ jobs:
 
       - name: Run mlflow project
         run: |
-          # Menyalakan server MLflow di latar belakang GitHub Actions
+          # Menyalakan server MLflow di latar belakang
           mlflow server --host 127.0.0.1 --port 5000 &
           sleep 5
+          
+          # Menyinkronkan perintah luar agar pakai server yang sama
+          export MLFLOW_TRACKING_URI=http://127.0.0.1:5000
           
           # Menjalankan project Anda
           cd MLProject
