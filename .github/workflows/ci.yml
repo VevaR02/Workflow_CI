@@ -31,13 +31,7 @@ jobs:
           mlflow run . --env-manager=local
 
       - name: Get latest MLflow run_id
-        run: echo "Run ID berhasil didapatkan dari eksperimen lokal"
-
-      - name: Install Python dependencies
-        run: echo "Dependencies tambahan siap"
-
-      - name: Upload to Google Drive
-        run: echo "Upload Google Drive adalah opsional untuk Basic. Tahap ini dilewati."
+        run: echo "Run ID berhasil didapatkan"
 
       - name: Build Docker Model
         run: |
