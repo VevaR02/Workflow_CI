@@ -27,6 +27,11 @@ jobs:
 
       - name: Run mlflow project
         run: |
+          # Menyalakan server MLflow di latar belakang GitHub Actions
+          mlflow server --host 127.0.0.1 --port 5000 &
+          sleep 5
+          
+          # Menjalankan project Anda
           cd MLProject
           mlflow run . --env-manager=local
 
