@@ -28,7 +28,7 @@ jobs:
       - name: Run mlflow project
         run: |
           cd MLProject
-          mlflow run .
+          mlflow run . --env-manager=local
 
       - name: Get latest MLflow run_id
         run: echo "Run ID berhasil didapatkan dari eksperimen lokal"
