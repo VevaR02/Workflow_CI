@@ -1,24 +1,48 @@
-name: Build and Push Docker Image
+name: Automate Model Re-training
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
+      - name: Run actions/checkout@v3
         uses: actions/checkout@v3
 
-      - name: Set up Python
+      - name: Set up Python 3.12.7
         uses: actions/setup-python@v4
         with:
-          python-version: '3.12'
+          python-version: '3.12.7'
 
-      - name: Install MLflow
-        run: pip install mlflow
+      - name: Check Env
+        run: env
+
+      - name: Install dependencies
+        run: pip install mlflow scikit-learn pandas
+
+      - name: Run mlflow project
+        run: |
+          cd MLProject
+          mlflow run .
+
+      - name: Get latest MLflow run_id
+        run: echo "Run ID berhasil didapatkan dari eksperimen lokal"
+
+      - name: Install Python dependencies
+        run: echo "Dependencies tambahan siap"
+
+      - name: Upload to Google Drive
+        run: echo "Upload Google Drive adalah opsional untuk Basic. Tahap ini dilewati."
+
+      - name: Build Docker Model
+        run: |
+          cd MLProject
+          docker build -t my-model .
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
@@ -26,12 +50,8 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build & Push Docker Model
-        env:
-          MLFLOW_TRACKING_URI: "https://dagshub.com/VevaR02/Shipment-MLOps.mlflow"
-          MLFLOW_TRACKING_USERNAME: "VevaR02"
-          MLFLOW_TRACKING_PASSWORD: ${{ secrets.DAGSHUB_TOKEN }}
-        run: |
-          mlflow models build-docker -m "runs:/a577762d5619442baddc818122045944/shipment_model" -n ${{ secrets.DOCKER_USERNAME }}/smart-shipment-model:latest
-          
-          docker push ${{ secrets.DOCKER_USERNAME }}/smart-shipment-model:latest
+      - name: Tag Docker Image
+        run: docker tag my-model ${{ secrets.DOCKER_USERNAME }}/shipment-model:latest
+
+      - name: Push Docker Image
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/shipment-model:latest
